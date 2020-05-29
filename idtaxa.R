@@ -3,12 +3,12 @@
 # Created by: jshleap
 # Created on: 2019-08-21
 
-suppressPackageStartupMessages(library(optparse))
-suppressPackageStartupMessages(library(parallel))
-suppressPackageStartupMessages(library(foreach))
+suppressPackageStartupMessages(library('optparse'))
+suppressPackageStartupMessages(library('parallel'))
+suppressPackageStartupMessages(library('foreach'))
 suppressPackageStartupMessages(library('doParallel'))
-suppressPackageStartupMessages(library(Biostrings))
-suppressPackageStartupMessages(library(DECIPHER))
+suppressPackageStartupMessages(library('Biostrings'))
+suppressPackageStartupMessages(library('DECIPHER'))
 
 fnc <- function (id) {paste(id$taxon,sep=";", collapse=";")}
 

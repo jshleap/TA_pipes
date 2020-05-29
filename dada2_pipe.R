@@ -156,10 +156,10 @@ parse_log <- function(logfile, name){
 
 execute_cutdadapt <- function (forward, reverse, primerF, primerR, len){#}, cutting){len <- len - max(nchar(primerF), nchar(primerR))
     name <- sapply(strsplit(basename(forward), "_R"), `[`, 1)
-    logfile = paste0('./Trimming/', name, '.log')
-    Adapter2rc = paste(reverseComplement(DNAString(primerR)),  collapse='')
-    Adapter1rc = paste(reverseComplement(DNAString(primerF)),  collapse='')
-    command = paste('cutadapt -m', len, '-g', primerF, '-G', primerR, '-a',
+    logfile <- paste0('./Trimming/', name, '.log')
+    Adapter2rc <- paste(reverseComplement(DNAString(primerR)),  collapse='')
+    Adapter1rc <- paste(reverseComplement(DNAString(primerF)),  collapse='')
+    command <- paste('cutadapt -m', len, '-g', primerF, '-G', primerR, '-a',
     Adapter2rc, '-A', Adapter1rc, '-o', paste0('./Trimming/', 'trimmed_', name,
     '_R1.fastq'), '-p', paste0('./Trimming/trimmed_', name, '_R2.fastq'),
     '--match-read-wildcards', '--trim-n',  '-n 2', '--untrimmed-output',
@@ -213,7 +213,7 @@ use_parallel, packages){
 }
 
 ### Start of the script
-option_list = list(
+option_list <- list(
   make_option(c("-p", "--path"), type="character", default=getwd(), 
               help=paste("Path where code should be executed (where the files",
               "are) [default= %default]")),
@@ -231,18 +231,18 @@ option_list = list(
   make_option(c("-T", "--trim_type"), type="character", default='auto',
               help=paste("Type of trimming (auto, fixed and Null), if fixed",
               "pass comma separated values [default= %default]")),
-  make_option(c("-d", "--db"), type="character", default=NULL,
-              help="Path to database (dada formated)  [default= %default]"),
-  make_option("--predict", action="store_true", help="Path to database (dada
-  formated)  [default= %default]"),
-  make_option(c("--reverse_complement"), action="store_true", default=FALSE,
+  #make_option(c("-d", "--db"), type="character", default=NULL,
+  #            help="Path to database (dada formated)  [default= %default]"),
+  #make_option("--predict", action="store_true", help="Path to database (dada
+  #formated)  [default= %default]"),
+  make_option("--reverse_complement", action="store_true", default=FALSE,
   help=paste0("After filter and trimming convert the reads to reverse ",
     "complement. This is necesary for RNA [default= %default]")),
   make_option(c("--min_overlap"), action="store", default=20, type="numeric",
   help=paste0("Minimum overlap for merging [default= %default]")),
   make_option(c("--min_amplicon_length"), action="store", default=200, type="numeric",
   help=paste0("Minimum amplicon lenght expected [default= %default]")),
-    make_option(c("--max_amplicon_length"), action="store", default=0, type="numeric",
+  make_option(c("--max_amplicon_length"), action="store", default=0, type="numeric",
   help=paste0("Minimum amplicon lenght expected [default= %default]")),
   make_option(c("--cpus"), action="store", default=detectCores(
     all.tests = FALSE, logical = TRUE), type="numeric", 
@@ -250,18 +250,18 @@ option_list = list(
   make_option(c("--maxEE_fwd"), action="store", default=5, type="numeric",
               help=paste("Maximum number of 'expected errors' allowed in",
                          "a forward read [default= %default]")),
-   make_option(c("--maxEE_rev"), action="store", default=5, type="numeric",
+  make_option("--maxEE_rev", action="store", default=5, type="numeric",
               help=paste("Maximum number of 'expected errors' allowed in",
                          "a reverse read [default= %default]")),
-  make_option(c("--min_asv_size"), action="store", default=8, type="numeric",
+  make_option("--min_asv_size", action="store", default=8, type="numeric",
               help=paste("Minumum size of an ASV  [default= %default]")),
-  make_option(c("--priors"), action='store', default=character(0),
+  make_option("--priors", action='store', default=character(0),
               help="Prior sequences. File with one headerless sequence per line")
   # make_option(c("--max_cpus"), action="store", default=-1, type="numeric",
   #             help=paste("Maximum number of cpus to use  [default= %default]"))
   )
-opt_parser = OptionParser(option_list=option_list);
-opt = parse_args(opt_parser);
+opt_parser <- OptionParser(option_list=option_list);
+opt <- parse_args(opt_parser);
 
 print("THIS SCRIPT ASSUMES THAT YOUR DATA HAS BEEN MULTIPLEXED PER SAMPLE")
 print(opt, sep = "\n")
@@ -298,7 +298,7 @@ min_overlap <- opt$min_overlap
 min_amplicon <- opt$min_amplicon_length
 max_amplicon <- opt$max_amplicon_length
 min_read_length <- round( (min_amplicon/2) + min_overlap )
-maxEE=c(opt$maxEE_fwd,opt$maxEE_rev) # this is relaxed and differs from tutorial
+maxEE<-c(opt$maxEE_fwd,opt$maxEE_rev) # this is relaxed and differs from tutorial
 
 # Forward and reverse fastq filenames have format: SAMPLENAME<PATTERN>
 if (is.null(prefix))
@@ -316,8 +316,8 @@ if (is.null(prefix))
 sample.names <- sapply(strsplit(basename(fnFs), "_R"), `[`, 1)
 
 # plot qualities before trimming and trim
-tr1=vector()
-tr2=vector()
+tr1 <- vector()
+tr2 <- vector()
 dir.create('Trimming')
 # Remove adapters (I am lazy so will use cutadapt)
 packages <- c('tools', 'plyr', 'ShortRead', 'dada2', 'Biostrings')
@@ -338,7 +338,7 @@ if ('fixed' %in% trimm_type){
   trimm = as.numeric(trimm_type[2:3])}else{trimm=c(NULL, NULL)}
 for (i in seq(length(fnFs))){
   o1 <- quality_plot(fnFs[[i]], minqual=min_qual, wdw=wdw, tr=trimm[1])
-  o2 <- quality_plot(fnRs[[i]], minqual=min_qual, wdw=wdw, tr=trimm[2])
+  o2 <- quality_plot(fnRs[[i]], minqual=min_qual, wdw=wdw, tr<-trimm[2])
   tr1 <- c(tr1, o1$trimm)
   tr2 <- c(tr2, o2$trimm)
   read_lenght <- o1$read_lenght
@@ -346,14 +346,14 @@ for (i in seq(length(fnFs))){
 
 if (is.null(trimm_type)) {
   print('Trimming disabled')
-  trimm = 0
+  trimm <- 0
 } else{
   if ('fixed' %in% trimm_type){
-    trimm = as.numeric(trimm_type[2:3])} else if ('minoverlap' %in% trimm_type) {
-      trimm = c(min_read_length, min_read_length)
+    trimm <- as.numeric(trimm_type[2:3])} else if ('minoverlap' %in% trimm_type) {
+      trimm <- c(min_read_length, min_read_length)
     }
   else{
-    trimm = c(max(min_read_length, min(tr1)), max(min_read_length, min(tr2)))
+    trimm <- c(max(min_read_length, min(tr1)), max(min_read_length, min(tr2)))
   }
   print(paste('Trimming forwards at', trimm[1], 'and reverse at', trimm[2]))
 }
@@ -480,38 +480,3 @@ for(sample in row.names(seqtab.nochim)){
     outfn <- file.path("./ASVs", paste0(sample,'_ASV.fasta'))
     writeXStringSet(seqs, outfn)
 }
-
-
-# #with dada
-# taxa <- assignTaxonomy(seqtab.nochim, db, multithread=TRUE)
-# #with decipher
-# if(grepl('Rdata', db)){load(db)}else{
-# if(grepl('Rdata', db)){load(db)}else{
-# train <- readDNAStringSet(db)
-# s <- strsplit(names(train), ";") # get names (has to be formated properly)
-# domain <- sapply(s, '[', 1)
-# phylum <- sapply(s, '[', 2)
-# class <- sapply(s, '[', 3)
-# order <- sapply(s, '[', 4)
-# family <- sapply(s, '[', 5)
-# genus <- sapply(s, '[', 6)
-# species <- sapply(s, '[', 7)
-# taxonomy <- paste("Root", domain, phylum, class, order, family, genus, species,
-# sep="; ")
-# trainingSet <- LearnTaxa(train, taxonomy)
-# plot(trainingSet)}
-# dna <- DNAStringSet(getSequences(seqtab.nochim)) # Create a DNAStringSet from the ASVs
-# ids <- IdTaxa(dna, trainingSet, strand="top", processors=NULL, verbose=FALSE) # use all processors
-# ranks <- c("domain", "phylum", "class", "order", "family", "genus", "species") # ranks of interest
-# # Convert the output object of class "Taxa" to a matrix analogous to the output from assignTaxonomy
-# taxid <- t(sapply(ids, function(x) {
-#         m <- match(ranks, x$rank)
-#         taxa <- x$taxon[m]
-#         taxa[startsWith(taxa, "unclassified_")] <- NA
-#         taxa
-# }))
-# colnames(taxid) <- ranks; rownames(taxid) <- getSequences(seqtab.nochim)
-# write.table(taxa, file='naive_bayes.tsv', sep='\t')
-# write.table(taxid, file='decipher.tsv', sep='\t')
-#
-
