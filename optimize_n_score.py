@@ -41,6 +41,10 @@ levels = ['superkingdom', 'phylum', 'order', 'class', 'family', 'genus',
               'species']
 
 def get_lineage(name):
+    """
+    Function to get the six level lineage of a taxonomic name
+    :param name: Taxonomic name
+    """
     sp = ''
     name = ' '.join([x for x in name.split() if x not in stop_words][:2])
     try:
@@ -205,6 +209,13 @@ mathews_scorer = make_scorer(matthews_corrcoef, greater_is_better=True)
 
 
 def score(prediction, truth, timed, taxa):
+    """
+    Function to score a prediction given the true labels
+    :param prediction: Vector of predicted labels
+    :param truth: Vector of True labels
+    :param timed: Time to run the prediction
+    :param taxa: Taxonomic level
+    """
     np.seterr(all='raise')
     tr = '%s_truth' % taxa
     pr = '%s_predicted' % taxa
@@ -265,6 +276,20 @@ def score(prediction, truth, timed, taxa):
 
 def run_lca(prefix, db, query, evalue, p_id, m_hit, p_hit, n_hit,
             asfile=False, **kwargs):
+    """
+    Function to run BASTA. It is a wrapper over the BASTA call to optimize its
+    parameters
+    :param prefix: Prefix of the output
+    :param db: Database to use in the inference
+    :param query: Query fasta file or fasta as a string 
+    :param evalue: Evalue treshold
+    :param p_id: Percent identity threshold
+    :param m_hit: Same as basta's -m/--minimum option
+    :param p_hit: Same as basta's -p/--maj_perc option
+    :param n_hit: Same as basta's -n/--number option
+    :param asfile: Wether to output the file or not
+    :param kwargs: Other Key-word arguments
+    """
     if not os.path.isfile('config.txt'):
         with open('config.txt', 'w') as c:
             c.write("query_id\t0\nsubject_id\t1\nalign_length\t6\nevalue\t3\n")
@@ -595,15 +620,35 @@ def split_train(X, y, folds=3):
 
 
 def compute_simple_grid(function, i, pnames, f_param, y_train, tax):
-    timed = namedtuple('timed', ('time', 'mem', 'cpu'))
-    ti = timed(0, 0, 0)
+    """
+    This function computes a grid search, that is, a search over a grid or set of parameters
+    :param function: Function to be optimized. 
+    :param i: Parameters values to optimize
+    :param pnames: name of the parameter values to optimize
+    :param f_param: Other parameters to the function (these would not be optimized)
+    :param y_train: Training fold labels
+    :param tax: Taxonomic level being evaluated
+    """
+    # Generate an empty namedtupled named timed
+    timed = namedtuple('timed', ('time', 'mem', 'cpu'))  
+    # filled with dummy variables. This is to make it compatible 
+    # with the score function
+    ti = timed(0, 0, 0)  
+    # Generate a dictionary mapping parameter values with their name
     d = dict(zip(pnames, i))
+    # Merge the parameters to be optimized with the static parameter
     z = {**d, **f_param}
+    # Get a prediction with the function and the parameters
     prediction = function(**z)
+    # Remove empty lines in the prediction
     prediction = prediction.replace(r'^\s*$', np.nan, regex=True)
+    # Score the prediction using the traingset labels
     sc = score(prediction, y_train, ti, tax)
+    # Transform the resulting namedtuple into a dataframe
     scd = pd.DataFrame(data=[sc])
+    # Add the optimized parameters as a column in the dataframe
     scd = pd.concat([scd, pd.DataFrame(data=[d])], axis=1)
+    # Add names to the index referring to the function name
     scd = scd.rename(index={0: function.__name__.split('_')[1]})
     return scd
 
