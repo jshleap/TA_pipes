@@ -210,3 +210,9 @@ variable. For the  methods that require global alignments, we used
 A2G<sup>2</sup> (https://github.com/jshleap/A2G), and therefore the gobal
 and local gene references need to be provided in the databases.py. By default
 it will use the ones provided in this git.
+
+To execute it, just move to where the Mocks are and type:
+
+```bash
+python3 benchmark_run.py
+```
