@@ -120,7 +120,7 @@ samples (and hence 10 files). Say that the  files are in the following path
 To execute the above, you can type:
 
 ```bash
-Rscript dadatest.R \
+Rscript dada2_pipe.R \
     --path=/home/user/Lake_samples
     --fwd_primer=GGWACWGGWTGAACWGTWTAYCCYCC \
     --rev_primer=TAAACTTCAGGGTGACCAAAAAATCA \ 
